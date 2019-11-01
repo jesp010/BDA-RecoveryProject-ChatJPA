@@ -8,13 +8,17 @@ package BusinessObjects;
 import Enums.Sex;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,7 +26,6 @@ import javax.persistence.TemporalType;
 /**
  * @author Juan Enrique Solis Perla
  * @ID: 165920 Advanced Databases Class, ISW, ITSON
- * @lastModification: 01/11/2019:12:55 PDT
  */
 @Entity
 @Table(name = "users")
@@ -49,11 +52,25 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "sex", nullable = false)
     private Sex sex;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<UserChat> chats;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Message> messages;
 
     public User() {
     }
 
-    
+    public User(String userName, String email, Date birth_date, Date creationDate, Sex sex, List<UserChat> chats, List<Message> messages) {
+        this.userName = userName;
+        this.email = email;
+        this.birth_date = birth_date;
+        this.creationDate = creationDate;
+        this.sex = sex;
+        this.chats = chats;
+        this.messages = messages;
+    }
     
     public Integer getId() {
         return id;
@@ -103,6 +120,22 @@ public class User implements Serializable {
         this.sex = sex;
     }
 
+    public List<UserChat> getChats() {
+        return chats;
+    }
+
+    public void setChats(List<UserChat> chats) {
+        this.chats = chats;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -125,7 +158,6 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "BusinessObjects.User[ id=" + id + " ]";
+        return "User{" + "id=" + id + ", userName=" + userName + ", email=" + email + ", birth_date=" + birth_date + ", creationDate=" + creationDate.toString() + '}';
     }
-
 }
