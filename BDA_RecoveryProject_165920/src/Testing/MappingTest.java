@@ -1,6 +1,7 @@
 package Testing;
 
 import BusinessObjects.*;
+import DataAccess.BaseDAO;
 import Enums.Sex;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,7 +15,7 @@ public class MappingTest {
         EntityManagerFactory factory = null;
         EntityManager em = null;
         
-        factory = Persistence.createEntityManagerFactory("PU_juatsapp");
+        factory = Persistence.createEntityManagerFactory(BaseDAO.PU_JUATSAPP);
         em = factory.createEntityManager();
 
         ArrayList<Object> objects = new ArrayList<>();

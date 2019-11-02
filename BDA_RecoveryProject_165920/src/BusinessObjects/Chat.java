@@ -58,6 +58,14 @@ public class Chat implements Serializable {
         this.users = users;
     }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
