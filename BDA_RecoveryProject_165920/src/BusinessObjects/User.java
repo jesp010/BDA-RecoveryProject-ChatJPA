@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package BusinessObjects;
 
 import Enums.Sex;
@@ -38,13 +33,16 @@ public class User implements Serializable {
     @Column(name = "username", nullable = false)
     private String userName;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "email", nullable = false)
     private String email;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "birth_date", nullable = false)
     private Date birth_date;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
@@ -52,10 +50,10 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "sex", nullable = false)
     private Sex sex;
-    
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<UserChat> chats;
-    
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Message> messages;
 
@@ -71,7 +69,7 @@ public class User implements Serializable {
         this.chats = chats;
         this.messages = messages;
     }
-    
+
     public Integer getId() {
         return id;
     }
@@ -86,6 +84,14 @@ public class User implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -158,6 +164,6 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", userName=" + userName + ", email=" + email + ", birth_date=" + birth_date + ", creationDate=" + creationDate.toString() + '}';
+        return "User{" + "id=" + id + ", userName=" + userName + ", password=" + password + ", email=" + email + ", birth_date=" + birth_date + ", creationDate=" + creationDate + ", sex=" + sex + '}';
     }
 }
