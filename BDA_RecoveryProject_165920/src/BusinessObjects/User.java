@@ -30,13 +30,13 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String userName;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Temporal(TemporalType.DATE)
@@ -60,8 +60,9 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String userName, String email, Date birth_date, Date creationDate, Sex sex, List<UserChat> chats, List<Message> messages) {
+    public User(String userName, String password, String email, Date birth_date, Date creationDate, Sex sex, List<UserChat> chats, List<Message> messages) {
         this.userName = userName;
+        this.password = password;
         this.email = email;
         this.birth_date = birth_date;
         this.creationDate = creationDate;

@@ -19,8 +19,8 @@ public class MappingTest {
         em = factory.createEntityManager();
 
         ArrayList<Object> objects = new ArrayList<>();
-        User u1 = new User("juan enrique", "juan@gmail.com", new Date(1997 - 1900, 7, 11), new Date(), Sex.MALE, null, null);
-        User u2 = new User("diana gabriela", "diana@gmail.com", new Date(1996 - 1900, 1, 16), new Date(), Sex.FEMALE, null, null);
+        User u1 = new User("juan enrique", "123123qwe", "juan@gmail.com", new Date(1997 - 1900, 7, 11), new Date(), Sex.MALE, null, null);
+        User u2 = new User("diana gabriela", "123123qwe", "diana@gmail.com", new Date(1996 - 1900, 1, 16), new Date(), Sex.FEMALE, null, null);
         objects.add(u1);
         objects.add(u2);
         

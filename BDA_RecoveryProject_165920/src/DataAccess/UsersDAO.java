@@ -73,6 +73,7 @@ public class UsersDAO {
                 user_tmp.setMessages(user_tmp.getMessages());
                 user_tmp.setSex(user.getSex());
                 user_tmp.setUserName(user.getUserName());
+                user_tmp.setPassword(user.getPassword());
                 em.persist(user_tmp);
                 em.getTransaction().commit();
                 return true;
