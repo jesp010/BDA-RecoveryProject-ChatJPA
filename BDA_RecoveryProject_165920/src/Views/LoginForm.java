@@ -1,21 +1,80 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Views;
 
-/**
- *
- * @author Juan
- */
-public class LoginForm extends javax.swing.JFrame {
+import BusinessObjects.User;
+import DataAccess.UsersDAO;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
+import Regex.Regex;
 
-    /**
-     * Creates new form LoginForm
-     */
+/**
+ * @author Juan Enrique Solis Perla
+ * @ID: 165920 Advanced Databases Class, ISW, ITSON
+ */
+public class LoginForm extends javax.swing.JFrame implements ActionListener {
+
+    UsersDAO usersDAO;
+
     public LoginForm() {
         initComponents();
+
+        usersDAO = new UsersDAO();
+
+        jButtonLogin.addActionListener(this);
+        jButtonLogin.setActionCommand("Login");
+
+        jButtonRegister.addActionListener(this);
+        jButtonRegister.setActionCommand("Register");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        String action = ae.getActionCommand();
+
+        switch (action) {
+
+            case "Login":
+                login();
+                break;
+            case "Register":
+                register();
+                break;
+        }
+    }
+
+    private void cleanTextFields() {
+        jTextFieldEmail.setText("");
+        jPasswordField.setText("");
+    }
+
+    private void register() {
+        RegisterForm rf = new RegisterForm();
+        cleanTextFields();
+    }
+
+    private void login() {
+        String email = jTextFieldEmail.getText();
+        User user = usersDAO.findByEmail(email);
+        if (Regex.matchEmail(email)) {
+            if (user != null) {
+                String password = String.valueOf(jPasswordField.getPassword());
+                if (Regex.matchPassword(password)) {
+                    if (user.getPassword().equals(password)) {
+                        ChatsListForm clf = new ChatsListForm();
+                        cleanTextFields();
+                        JOptionPane.showMessageDialog(rootPane, "Welcome " + user.getUserName() + "!!");
+                    } else {
+                        JOptionPane.showMessageDialog(rootPane, "Couldn't login, incorrect password");
+                    }
+                } else {
+                      JOptionPane.showMessageDialog(rootPane, "Invalid password. (Only letters numbers and - _)");  
+                }
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Couldn't login, didn't found user with specified email");
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Invalid email");
+        }
     }
 
     /**
@@ -36,9 +95,10 @@ public class LoginForm extends javax.swing.JFrame {
         jTextFieldEmail = new javax.swing.JTextField();
         jPasswordField = new javax.swing.JPasswordField();
         jButtonLogin = new javax.swing.JButton();
+        jButtonRegister = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(368, 401));
+        setMinimumSize(new java.awt.Dimension(316, 379));
         setResizable(false);
 
         rootPanel.setBorder(new javax.swing.border.MatteBorder(null));
@@ -100,7 +160,7 @@ public class LoginForm extends javax.swing.JFrame {
                     .addComponent(jLabelEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelLoginFieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldEmail)
+                    .addComponent(jTextFieldEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                     .addComponent(jPasswordField))
                 .addContainerGap())
         );
@@ -121,17 +181,23 @@ public class LoginForm extends javax.swing.JFrame {
         jButtonLogin.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jButtonLogin.setText("Login");
 
+        jButtonRegister.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jButtonRegister.setText("Register");
+
         javax.swing.GroupLayout rootPanelLayout = new javax.swing.GroupLayout(rootPanel);
         rootPanel.setLayout(rootPanelLayout);
         rootPanelLayout.setHorizontalGroup(
             rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rootPanelLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanelLoginFields, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButtonLogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(rootPanelLayout.createSequentialGroup()
+                        .addComponent(jButtonRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanelLoginFields, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         rootPanelLayout.setVerticalGroup(
             rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,7 +207,11 @@ public class LoginForm extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanelLoginFields, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(rootPanelLayout.createSequentialGroup()
+                        .addComponent(jButtonLogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(2, 2, 2)))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -205,6 +275,7 @@ public class LoginForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonLogin;
+    private javax.swing.JButton jButtonRegister;
     private javax.swing.JLabel jLabelEmail;
     private javax.swing.JLabel jLabelPassword;
     private javax.swing.JLabel jLabelTitle;

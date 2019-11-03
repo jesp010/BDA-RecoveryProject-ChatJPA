@@ -56,6 +56,28 @@ public class MessagesDAO {
         return null;
     }
 
+    public ArrayList<Message> findAllChatMessages(Integer chatID) {
+        em.getTransaction().begin();
+        //Creates the query constructor
+        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+        //Builds the object
+        cq.select(cq.from(Message.class));
+        //Creates the query ready to execute
+        Query q = em.createQuery(cq);
+        //Execute the query and stores the result in an ArrayList
+        ArrayList<Message> messages = new ArrayList<>(q.getResultList());
+        
+        ArrayList<Message> chatMessages =  new ArrayList<>();
+        for(Message m : messages){
+            if(chatID == m.getChat().getId()) chatMessages.add(m);
+        }
+
+        //Transaction ends
+        em.getTransaction().commit();
+      
+        return chatMessages;
+    }
+
     public void save(Message message) {
         em.getTransaction().begin();
         em.persist(message);

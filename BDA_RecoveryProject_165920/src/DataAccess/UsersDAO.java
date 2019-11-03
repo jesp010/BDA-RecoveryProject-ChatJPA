@@ -2,10 +2,12 @@ package DataAccess;
 
 import BusinessObjects.User;
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 
 /**
@@ -20,6 +22,7 @@ public class UsersDAO {
         factory = Persistence.createEntityManagerFactory(BaseDAO.PU_JUATSAPP);
         em = factory.createEntityManager();
     }
+    
     public User findByID(Integer id) {
         // get length of id (Can't be > 11
         int length = Integer.toString(id).length();
@@ -33,6 +36,18 @@ public class UsersDAO {
             }
         }
         return null;
+    }
+    
+    public User findByEmail(String email){
+        em.getTransaction().begin();
+        String jpqlQuery = "SELECT u FROM User u  WHERE u.email = :email";
+        TypedQuery<User> query = em.createQuery(jpqlQuery, User.class);
+        query.setParameter("email", email);
+        List<User> user = query.getResultList();
+        em.getTransaction().commit();
+        
+        if(user.size() > 0) return user.get(0);
+        else return null;
     }
 
     public ArrayList<User> findAll() {
@@ -66,7 +81,7 @@ public class UsersDAO {
 
             User user_tmp = em.find(User.class, user.getId());
             if (user_tmp != null) {
-                user_tmp.setBirth_date(user.getBirth_date());
+                user_tmp.setBirthDate(user.getBirthDate());
                 user_tmp.setChats(user.getChats());
                 user_tmp.setCreationDate(user.getCreationDate());
                 user_tmp.setEmail(user.getEmail());

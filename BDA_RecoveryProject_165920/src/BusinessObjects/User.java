@@ -41,7 +41,7 @@ public class User implements Serializable {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "birth_date", nullable = false)
-    private Date birth_date;
+    private Date birthDate;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "creation_date", nullable = false)
@@ -64,7 +64,7 @@ public class User implements Serializable {
         this.userName = userName;
         this.password = password;
         this.email = email;
-        this.birth_date = birth_date;
+        this.birthDate = birth_date;
         this.creationDate = creationDate;
         this.sex = sex;
         this.chats = chats;
@@ -103,12 +103,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public Date getBirth_date() {
-        return birth_date;
+    public Date getBirthDate() {
+        return birthDate;
     }
 
-    public void setBirth_date(Date birth_date) {
-        this.birth_date = birth_date;
+    public void setBirthDate(Date birth_date) {
+        this.birthDate = birth_date;
     }
 
     public Date getCreationDate() {
@@ -165,6 +165,6 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", userName=" + userName + ", password=" + password + ", email=" + email + ", birth_date=" + birth_date + ", creationDate=" + creationDate + ", sex=" + sex + '}';
+        return "User{" + "id=" + id + ", userName=" + userName + ", password=" + password + ", email=" + email + ", birth_date=" + birthDate + ", creationDate=" + creationDate + ", sex=" + sex + '}';
     }
 }

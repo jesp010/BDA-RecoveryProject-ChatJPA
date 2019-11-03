@@ -1,21 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Views;
 
+  
 /**
- *
- * @author Juan
+ * @author Juan Enrique Solis Perla
+ * @ID: 165920 Advanced Databases Class, ISW, ITSON
  */
 public class ChatsListForm extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ChatsListForm
-     */
     public ChatsListForm() {
         initComponents();
+        setVisible(true);
     }
 
     /**
