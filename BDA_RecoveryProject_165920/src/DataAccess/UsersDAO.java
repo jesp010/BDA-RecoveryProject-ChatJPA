@@ -54,43 +54,16 @@ public class UsersDAO {
         }
     }
 
-//    public User findByUsername(String username) {
-//        em.getTransaction().begin();
-//        String jpqlQuery = "SELECT u FROM User u  WHERE u.username = :username";
-//        TypedQuery<User> query = em.createQuery(jpqlQuery, User.class);
-//        query.setParameter("username", username);
-//        List<User> user = query.getResultList();
-//        em.getTransaction().commit();
-//
-//        if (user.size() > 0) {
-//            return user.get(0);
-//        } else {
-//            return null;
-//        }
-//    }
     public User findByUsername(String username) {
         ArrayList<User> users = findAll();
-        for(User u:users){
-            if(u.getUserName().equals(username))
-            return u;
+        for (User u : users) {
+            if (u.getUserName().equals(username)) {
+                return u;
+            }
         }
         return null;
     }
 
-//    public ArrayList<User> findAll(User user) {
-//        em.getTransaction().begin();
-//        String jpqlQuery = "SELECT u FROM User u  WHERE u.ID != :uid";
-//        TypedQuery<User> query = em.createQuery(jpqlQuery, User.class);
-//        query.setParameter("uid", user.getId());
-//        ArrayList<User> users = new ArrayList<>(query.getResultList());
-//        em.getTransaction().commit();
-//
-//        if (users.size() > 0) {
-//            return users;
-//        } else {
-//            return null;
-//        }
-//    }
     public ArrayList<User> findAll(User user) {
         ArrayList<User> users = findAll();
         if (users.size() > 0) {
@@ -142,8 +115,17 @@ public class UsersDAO {
                 user_tmp.setSex(user.getSex());
                 user_tmp.setUserName(user.getUserName());
                 user_tmp.setPassword(user.getPassword());
-                em.persist(user_tmp);
-                em.getTransaction().commit();
+
+                try {
+                    em.persist(user_tmp);
+                    em.getTransaction().commit();
+                } catch (javax.persistence.RollbackException e) {
+                    e.printStackTrace();
+                    return false;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    return false;
+                }
                 return true;
             } else {
                 em.getTransaction().commit();

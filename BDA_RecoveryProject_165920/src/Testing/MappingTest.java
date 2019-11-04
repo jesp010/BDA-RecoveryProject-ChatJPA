@@ -2,9 +2,13 @@ package Testing;
 
 import BusinessObjects.*;
 import DataAccess.BaseDAO;
+import DataAccess.ChatsDAO;
+import DataAccess.MessagesDAO;
 import DataAccess.UsersDAO;
 import Enums.Sex;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -22,16 +26,16 @@ public class MappingTest {
         em = factory.createEntityManager();
 
         ArrayList<Object> objects = new ArrayList<>();
-        User u1 = new User("juan4", "123123qwe", "juaan4@gail.com", new Date(1997 - 1900, 7, 11), new Date(), Sex.MALE, null, null);
-        User u2 = new User("diana4", "123123qwe", "diaana4@gmil.com", new Date(1996 - 1900, 1, 16), new Date(), Sex.FEMALE, null, null);
+        User u1 = new User("juan8", "123123qwe", "jjsjj@gmail.com", new Date(1997 - 1900, 7, 11), new Date(), Sex.MALE, null, null);
+        User u2 = new User("diana8", "123123qwe", "ddsdd@gmail.com", new Date(1996 - 1900, 1, 16), new Date(), Sex.FEMALE, null, null);
         objects.add(u1);
         objects.add(u2);
 
         Chat c1 = new Chat(null, new Date());
         objects.add(c1);
 
-        Message m1 = new Message(new Date(), "mensaje 1XD", u1, c1);
-        Message m2 = new Message(new Date(), "mensaje2 XDXD", u2, c1);
+        Message m1 = new Message(new Date(), "mensaje 1123XD", u1, c1);
+        Message m2 = new Message(new Date(), "mensaje2qwe XDXD", u2, c1);
         objects.add(m1);
         objects.add(m2);
 
@@ -67,6 +71,13 @@ public class MappingTest {
 
 //        UsersDAO udao = new UsersDAO();
 //        System.out.println(udao.findByEmail("juan@gmail.com").toString());
+        
+        MessagesDAO messagesDAO = new MessagesDAO();
+        ArrayList<Message> messages = messagesDAO.findAllByChatID(1);
+//        Collections.sort(messages);
+        for(Message m : messages){
+            System.out.println(m.toString());
+        }
         
         em.getTransaction().begin();
         for (Object o : objects) {

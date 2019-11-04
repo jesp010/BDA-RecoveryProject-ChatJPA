@@ -23,6 +23,10 @@ public class MessageControl {
     public ArrayList<Message> findAll() {
         return messagesDAO.findAll();
     }
+    
+    public ArrayList<Message> findAllByChatID(Integer chatID) {
+        return messagesDAO.findAllByChatID(chatID);
+    }
 
     public void save(Message message) {
         messagesDAO.save(message);

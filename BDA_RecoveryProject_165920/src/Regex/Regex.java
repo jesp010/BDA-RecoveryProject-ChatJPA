@@ -11,8 +11,8 @@ public class Regex {
     private static final String USERNAME_REGEX = "^[a-z0-9_-]{3,16}$";
 
     private static final String DATE_YEAR_REGEX = "^[0-9]{4}$";
-    private static final String DATE_REGEX_MONTH = "^[0-9]{2}$";
-    private static final String DATE_REGEX_DAY = "^[0-9]{2}$";
+    private static final String DATE_MONTH_REGEX = "^[0-9]{2}$";
+    private static final String DATE_DAY_REGEX = "^[0-9]{2}$";
 
     public static boolean matchEmail(String email) {
         Pattern p = Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
@@ -34,8 +34,8 @@ public class Regex {
     
     public static boolean matchDate(String year, String month, String day) {
         Pattern pYear = Pattern.compile(DATE_YEAR_REGEX);
-        Pattern pMonth = Pattern.compile(DATE_REGEX_MONTH);
-        Pattern pDay = Pattern.compile(DATE_REGEX_DAY);
+        Pattern pMonth = Pattern.compile(DATE_MONTH_REGEX);
+        Pattern pDay = Pattern.compile(DATE_DAY_REGEX);
         
         Matcher mYear = pYear.matcher(year);
         Matcher mMonth = pMonth.matcher(month);

@@ -17,7 +17,7 @@ public class LoginForm extends javax.swing.JFrame implements ActionListener {
 
     public LoginForm() {
         initComponents();
-        
+
         userControl = new UserControl();
 
         jButtonLogin.addActionListener(this);
@@ -67,7 +67,7 @@ public class LoginForm extends javax.swing.JFrame implements ActionListener {
                         JOptionPane.showMessageDialog(rootPane, "Couldn't login, incorrect password");
                     }
                 } else {
-                      JOptionPane.showMessageDialog(rootPane, "Invalid password. (Only letters numbers and - _)");  
+                    JOptionPane.showMessageDialog(rootPane, "Invalid password. (Only letters numbers and - _)");
                 }
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Couldn't login, didn't found user with specified email");

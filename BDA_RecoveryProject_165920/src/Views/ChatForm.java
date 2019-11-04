@@ -1,22 +1,104 @@
 package Views;
 
 import BusinessObjects.Chat;
+import BusinessObjects.Message;
+import BusinessObjects.User;
+import Control.ChatControl;
+import Control.MessageControl;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Date;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * @author Juan Enrique Solis Perla
  * @ID: 165920 Advanced Databases Class, ISW, ITSON
  */
-public class ChatForm extends javax.swing.JFrame {
+public class ChatForm extends javax.swing.JFrame implements ActionListener{
+
     private Chat chat;
-    public ChatForm() {
+    private User user;
+    private ChatControl chatControl;
+    private MessageControl messageControl;
+    private ArrayList<Message> chatMessages = null;
+
+
+    public ChatForm(Chat chat, User userHost, User userReceiver) {
         initComponents();
         setVisible(true);
+        this.setTitle(userHost.getUserName());
+
+        this.chatControl = new ChatControl();
+        this.messageControl = new MessageControl();
+        this.user = userHost;
+        this.chat = chat;
+        
+        jButtonSend.addActionListener(this);
+        jButtonSend.setActionCommand("Send");
+        
+        chatMessages = messageControl.findAllByChatID(chat.getId());
+        refreshJTextPaneChatMessages();
+        jLabelTitle.setText("Chat with " + userReceiver.getUserName());
     }
 
-    public ChatForm(Chat chat) {
-        this.chat = chat;
-        initComponents();
-        setVisible(true);
+    private void send(){
+        String messageText = jTextAreaMessage.getText();
+        Message message = new Message(new Date(),messageText, this.user, this.chat);
+        messageControl.save(message);
+        getChatMessages();
+        refreshJTextPaneChatMessages();
+        jTextAreaMessage.setText("");
+    }
+    
+    private void getChatMessages() {
+        chatMessages.clear();
+        chatMessages = messageControl.findAllByChatID(chat.getId());
+    }
+
+    private void refreshJTextPaneChatMessages() {
+        Style style1 = jTextPaneChat.addStyle("User1Style", null);
+        StyleConstants.setForeground(style1, Color.BLUE);
+
+        Style style2 = jTextPaneChat.addStyle("User2Style", null);
+        StyleConstants.setForeground(style2, Color.MAGENTA);
+
+//        StyledDocument doc = jTextPaneChat.getStyledDocument();
+        StyledDocument doc = new DefaultStyledDocument();
+
+        if (chatMessages.size() > 0) {
+            for (Message m : chatMessages) {
+                try {
+                    if (m.getUser().getId() == this.user.getId()) {
+                        doc.insertString(doc.getLength(), m.getUser().getUserName() + ": ", style1);
+                        doc.insertString(doc.getLength(), m.getMessage() + "\n\n", null);
+                    } else {
+                        doc.insertString(doc.getLength(), m.getUser().getUserName() + ": ", style2);
+                        doc.insertString(doc.getLength(), m.getMessage() + "\n\n", null);
+                    }
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+            jTextPaneChat.setStyledDocument(doc);
+        }
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        String action = ae.getActionCommand();
+
+        switch (action) {
+
+            case "Send":
+                send();
+                break;
+        }
     }
 
     /**
@@ -35,13 +117,14 @@ public class ChatForm extends javax.swing.JFrame {
         jTextAreaMessage = new javax.swing.JTextArea();
         jButtonSend = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         jLabelTitle.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabelTitle.setText("Chat with Juan");
 
         jTextPaneChat.setEditable(false);
+        jTextPaneChat.setBackground(new java.awt.Color(204, 204, 204));
+        jTextPaneChat.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jScrollPaneChat.setViewportView(jTextPaneChat);
 
         jTextAreaMessage.setColumns(20);
@@ -64,8 +147,8 @@ public class ChatForm extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPaneMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonSend, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonSend, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -86,43 +169,6 @@ public class ChatForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ChatForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ChatForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ChatForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ChatForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ChatForm().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSend;

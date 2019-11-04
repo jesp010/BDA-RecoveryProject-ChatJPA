@@ -19,25 +19,25 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "messages")
-public class Message implements Serializable {
+public class Message implements Serializable, Comparable<Message> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date", nullable = false)
     private Date date;
-    
+
     @Column(name = "message", nullable = false)
     private String message;
-    
+
     @ManyToOne()
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne()
-    @JoinColumn(name="chat_id", nullable = false)
+    @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
     public Message() {
@@ -49,7 +49,7 @@ public class Message implements Serializable {
         this.user = user;
         this.chat = chat;
     }
-    
+
     public Integer getId() {
         return id;
     }
@@ -108,6 +108,11 @@ public class Message implements Serializable {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(Message message) {
+        return this.date.compareTo(message.getDate());
     }
 
     @Override

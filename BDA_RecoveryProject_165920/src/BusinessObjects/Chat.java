@@ -29,20 +29,20 @@ public class Chat implements Serializable {
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<UserChat> users;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
 
     public Chat() {
-        
+
     }
 
     public Chat(List<UserChat> users, Date creationDate) {
         this.users = users;
         this.creationDate = creationDate;
     }
-    
+
     public Integer getId() {
         return id;
     }

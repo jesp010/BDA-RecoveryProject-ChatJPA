@@ -2,6 +2,7 @@ package DataAccess;
 
 import BusinessObjects.Message;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -56,6 +57,24 @@ public class MessagesDAO {
         return null;
     }
 
+    public ArrayList<Message> findAllByChatID(Integer chatID) {
+        ArrayList<Message> allMessages = findAll();
+        ArrayList<Message> chatMessages = new ArrayList<>();
+        
+        //Check if ArrayList isn't empty
+        if (allMessages.size() > 0) {
+            //Add to chatMessages all messages with matching Chat ID
+            for (Message m : allMessages) {
+                if (chatID == m.getChat().getId()) {
+                    chatMessages.add(m);
+                }
+            }
+            Collections.sort(chatMessages);
+        }
+
+        return chatMessages;
+    }
+
     public ArrayList<Message> findAllChatMessages(Integer chatID) {
         em.getTransaction().begin();
         //Creates the query constructor
@@ -66,15 +85,17 @@ public class MessagesDAO {
         Query q = em.createQuery(cq);
         //Execute the query and stores the result in an ArrayList
         ArrayList<Message> messages = new ArrayList<>(q.getResultList());
-        
-        ArrayList<Message> chatMessages =  new ArrayList<>();
-        for(Message m : messages){
-            if(chatID == m.getChat().getId()) chatMessages.add(m);
+
+        ArrayList<Message> chatMessages = new ArrayList<>();
+        for (Message m : messages) {
+            if (chatID == m.getChat().getId()) {
+                chatMessages.add(m);
+            }
         }
 
         //Transaction ends
         em.getTransaction().commit();
-      
+
         return chatMessages;
     }
 
