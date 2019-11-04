@@ -5,13 +5,8 @@ import Control.UserControl;
 import Enums.Sex;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -59,34 +54,85 @@ public class UpdateForm extends javax.swing.JFrame implements ActionListener {
     }
 
     private void update() {
-        String password = String.valueOf(jPasswordField.getText());
-        Date date = new Date(Integer.parseInt(jTextFieldBirthDateYear.getText()), Integer.parseInt(jTextFieldBirthDateMonth.getText()), Integer.parseInt(jTextFieldBirthDateDay.getText()));
+        Date date = null;
+        Sex sex = null;
 
-        user.setEmail(jTextFieldEmail.getText());
-        user.setPassword(password);
-        user.setUserName(jTextFieldUsername.getText());
-        user.setBirthDate(date);
-
+        //Get Selected Sex
         String sexSelection = (String) jComboBoxSex.getSelectedItem();
 
-        if (sexSelection.equalsIgnoreCase("FEMALE")) {
-            user.setSex(Sex.FEMALE);
-            userControl.update(user);
-            JOptionPane.showMessageDialog(rootPane, "Updated user successfully");;
-        } else if (sexSelection.equalsIgnoreCase("MALE")) {
-            user.setSex(Sex.MALE);
-            userControl.update(user);
-            JOptionPane.showMessageDialog(rootPane, "Updated user successfully");
+        //Get Date from jTextFields
+        String year = jTextFieldBirthDateYear.getText();
+        String month = jTextFieldBirthDateMonth.getText();
+        String day = jTextFieldBirthDateDay.getText();
+
+        //Get email from jTextField
+        String email = jTextFieldEmail.getText();
+
+        //Get username from jTextField
+        String username = jTextFieldUsername.getText();
+
+        //Get password from jTextField
+        String password = String.valueOf(jPasswordField.getText());
+
+        //Email validation
+        if (!Regex.Regex.matchEmail(email)) {
+            JOptionPane.showMessageDialog(rootPane, "Invalid email format");
         } else {
-            JOptionPane.showMessageDialog(rootPane, "Select sex please");
+            //Password validation
+            if (!Regex.Regex.matchPassword(password)) {
+                JOptionPane.showMessageDialog(rootPane, "Invalid password, must be from 4 to 8 digits and at least 1 number");
+            } else {
+                //Username validation
+                if (!Regex.Regex.matchUsername(username)) {
+                    JOptionPane.showMessageDialog(rootPane, "Invalid username, must be from 3 to 16 digits, no spaces, only letters, numbers, hyphen(-) and underscore(_)");
+                } else {
+                    //Date Validation
+                    if (!Regex.Regex.matchDate(year, month, day)) {
+                        JOptionPane.showMessageDialog(rootPane, "Invalid date, please follow this format: YYYY-MM-DD, 4 numbers year, 2 numbers month, 2 numbers day");
+                    } else {
+                        date = new Date(Integer.parseInt(year) - 1900, Integer.parseInt(month) - 1, Integer.parseInt(day));
+
+                        //Sex validation
+                        if (sexSelection.equalsIgnoreCase("FEMALE") || sexSelection.equalsIgnoreCase("MALE")) {
+                            //Asign selected Sex value to local sex variable
+                            if (sexSelection.equalsIgnoreCase("FEMALE")) {
+                                sex = Sex.FEMALE;
+                            } else {
+                                sex = Sex.MALE;
+                            }
+
+                            //Once everything has been validated proceed to register new user
+                            user.setBirthDate(date);
+                            user.setEmail(email);
+                            user.setPassword(password);
+                            user.setSex(sex);
+                            user.setUserName(username);
+                            
+                            Boolean updated = userControl.update(user);
+                            if(!updated) JOptionPane.showMessageDialog(rootPane, "Could't update user");
+                            else JOptionPane.showMessageDialog(rootPane, "Updated user successfully");
+                            cleanTextInputs();
+                        } else {
+                            JOptionPane.showMessageDialog(rootPane, "Select sex please");
+                        }
+                    }
+                }
+            }
         }
     }
-    
-    private void cancel(){
+
+    private void cancel() {
+        cleanTextInputs();
+    }
+
+    private void cleanTextInputs() {
         jTextFieldEmail.setText("");
         jTextFieldUsername.setText("");
-        jPasswordField.setText("");
         jComboBoxSex.setSelectedIndex(0);
+        jTextFieldBirthDateYear.setText("YYYY");
+        jTextFieldBirthDateMonth.setText("MM");
+        jTextFieldBirthDateDay.setText("DD");
+        jPasswordField.setText("");
     }
 
     @Override

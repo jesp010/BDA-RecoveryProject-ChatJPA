@@ -32,28 +32,65 @@ public class RegisterForm extends javax.swing.JFrame implements ActionListener {
     }
 
     private void register() {
-        String sexSelection = (String) jComboBoxSex.getSelectedItem();
-        Date date = new Date(Integer.parseInt(jTextFieldBirthDateYear.getText()) - 1900, Integer.parseInt(jTextFieldBirthDateMonth.getText()) - 1, Integer.parseInt(jTextFieldBirthDateDay.getText()));
-        Sex sex;
+        Date date = null;
+        Sex sex = null;
 
+        //Get Selected Sex
+        String sexSelection = (String) jComboBoxSex.getSelectedItem();
+
+        //Get Date from jTextFields
+        String year = jTextFieldBirthDateYear.getText();
+        String month = jTextFieldBirthDateMonth.getText();
+        String day = jTextFieldBirthDateDay.getText();
+
+        //Get email from jTextField
         String email = jTextFieldEmail.getText();
+
+        //Get username from jTextField
         String username = jTextFieldUsername.getText();
+
+        //Get password from jTextField
         String password = String.valueOf(jPasswordField.getText());
 
-        if (sexSelection.equalsIgnoreCase("FEMALE")) {
-            sex = Sex.FEMALE;
-            User user = new User(username, password, email, date, new Date(), sex, null, null);
-            userControl.save(user);
-            JOptionPane.showMessageDialog(rootPane, "Registered user successfully");;
-        } else if (sexSelection.equalsIgnoreCase("MALE")) {
-            sex = Sex.MALE;
-            User user = new User(username, password, email, date, new Date(), sex, null, null);
-            userControl.save(user);;
-            JOptionPane.showMessageDialog(rootPane, "Registered user successfully");
+        //Email validation
+        if (!Regex.Regex.matchEmail(email)) {
+            JOptionPane.showMessageDialog(rootPane, "Invalid email format");
         } else {
-            JOptionPane.showMessageDialog(rootPane, "Select sex please");
+            //Password validation
+            if (!Regex.Regex.matchPassword(password)) {
+                JOptionPane.showMessageDialog(rootPane, "Invalid password, must be from 4 to 8 digits and at least 1 number");
+            } else {
+                //Username validation
+                if (!Regex.Regex.matchUsername(username)) {
+                    JOptionPane.showMessageDialog(rootPane, "Invalid username, must be from 3 to 16 digits, no spaces, only letters, numbers, hyphen(-) and underscore(_)");
+                } else {
+                    //Date Validation
+                    if (!Regex.Regex.matchDate(year, month, day)) {
+                        JOptionPane.showMessageDialog(rootPane, "Invalid date, please follow this format: YYYY-MM-DD, 4 numbers year, 2 numbers month, 2 numbers day");
+                    } else {
+                        date = new Date(Integer.parseInt(year) - 1900, Integer.parseInt(month) - 1, Integer.parseInt(day));
+
+                        //Sex validation
+                        if (sexSelection.equalsIgnoreCase("FEMALE") || sexSelection.equalsIgnoreCase("MALE")) {
+                            //Asign selected Sex value to local sex variable
+                            if (sexSelection.equalsIgnoreCase("FEMALE")) {
+                                sex = Sex.FEMALE;
+                            } else {
+                                sex = Sex.MALE;
+                            }
+
+                            //Once everything has been validated proceed to register new user
+                            User user = new User(username, password, email, date, new Date(), sex, null, null);
+                            userControl.save(user);
+                            cleanTextInputs();
+                            JOptionPane.showMessageDialog(rootPane, "Registered user successfully");
+                        } else {
+                            JOptionPane.showMessageDialog(rootPane, "Select sex please");
+                        }
+                    }
+                }
+            }
         }
-        cleanTextInputs();
     }
 
     private void cancel() {

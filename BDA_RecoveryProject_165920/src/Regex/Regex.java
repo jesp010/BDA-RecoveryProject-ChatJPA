@@ -6,24 +6,44 @@ import java.util.regex.Pattern;
 public class Regex {
 
     private static final String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
-    private static final String PASSWORD_REGEX = "^[a-z0-9_-]{3,16}$";
+    //Password expression. Password must be between 4 and 8 digits long and include at least one numeric digit.
+    private static final String PASSWORD_REGEX = "^(?=.*\\d).{4,8}$";
     private static final String USERNAME_REGEX = "^[a-z0-9_-]{3,16}$";
+
+    private static final String DATE_YEAR_REGEX = "^[0-9]{4}$";
+    private static final String DATE_REGEX_MONTH = "^[0-9]{2}$";
+    private static final String DATE_REGEX_DAY = "^[0-9]{2}$";
 
     public static boolean matchEmail(String email) {
         Pattern p = Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
         Matcher matcher = p.matcher(email);
         return matcher.find();
     }
-    
-    public static boolean matchUsername(String username){
+
+    public static boolean matchUsername(String username) {
         Pattern p = Pattern.compile(USERNAME_REGEX);
         Matcher matcher = p.matcher(username);
         return matcher.find();
     }
-    
-    public static boolean matchPassword(String password){
+
+    public static boolean matchPassword(String password) {
         Pattern p = Pattern.compile(PASSWORD_REGEX);
         Matcher matcher = p.matcher(password);
         return matcher.find();
+    }
+    
+    public static boolean matchDate(String year, String month, String day) {
+        Pattern pYear = Pattern.compile(DATE_YEAR_REGEX);
+        Pattern pMonth = Pattern.compile(DATE_REGEX_MONTH);
+        Pattern pDay = Pattern.compile(DATE_REGEX_DAY);
+        
+        Matcher mYear = pYear.matcher(year);
+        Matcher mMonth = pMonth.matcher(month);
+        Matcher mDay = pDay.matcher(day);
+        
+        boolean yearMatch = mYear.find(), monthMatch = mMonth.find(), dayMatch = mDay.find();
+        
+        if(yearMatch && monthMatch && dayMatch) return true;
+        return false;
     }
 }
