@@ -1,13 +1,88 @@
 package Views;
 
+import BusinessObjects.User;
+import Control.UserControl;
+import Enums.Sex;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JOptionPane;
+
 /**
  * @author Juan Enrique Solis Perla
  * @ID: 165920 Advanced Databases Class, ISW, ITSON
  */
-public class RegisterForm extends javax.swing.JFrame {
+public class RegisterForm extends javax.swing.JFrame implements ActionListener {
+
+    UserControl userControl;
 
     public RegisterForm() {
         initComponents();
+        userControl = new UserControl();
+
+        jButtonRegister.addActionListener(this);
+        jButtonRegister.setActionCommand("Register");
+
+        jButtonCancel.addActionListener(this);
+        jButtonCancel.setActionCommand("Cancel");
+
+        setVisible(true);
+
+    }
+
+    private void register() {
+        String sexSelection = (String) jComboBoxSex.getSelectedItem();
+        Date date = new Date(Integer.parseInt(jTextFieldBirthDateYear.getText()) - 1900, Integer.parseInt(jTextFieldBirthDateMonth.getText()) - 1, Integer.parseInt(jTextFieldBirthDateDay.getText()));
+        Sex sex;
+
+        String email = jTextFieldEmail.getText();
+        String username = jTextFieldUsername.getText();
+        String password = String.valueOf(jPasswordField.getText());
+
+        if (sexSelection.equalsIgnoreCase("FEMALE")) {
+            sex = Sex.FEMALE;
+            User user = new User(username, password, email, date, new Date(), sex, null, null);
+            userControl.save(user);
+            JOptionPane.showMessageDialog(rootPane, "Registered user successfully");;
+        } else if (sexSelection.equalsIgnoreCase("MALE")) {
+            sex = Sex.MALE;
+            User user = new User(username, password, email, date, new Date(), sex, null, null);
+            userControl.save(user);;
+            JOptionPane.showMessageDialog(rootPane, "Registered user successfully");
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Select sex please");
+        }
+        cleanTextInputs();
+    }
+
+    private void cancel() {
+        cleanTextInputs();
+    }
+
+    private void cleanTextInputs() {
+        jTextFieldEmail.setText("");
+        jTextFieldUsername.setText("");
+        jComboBoxSex.setSelectedIndex(0);
+        jTextFieldBirthDateYear.setText("YYYY");
+        jTextFieldBirthDateMonth.setText("MM");
+        jTextFieldBirthDateDay.setText("DD");
+        jPasswordField.setText("");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        String action = ae.getActionCommand();
+
+        switch (action) {
+
+            case "Register":
+                register();
+                break;
+            case "Cancel":
+                cancel();
+                break;
+        }
     }
 
     /**
@@ -28,9 +103,11 @@ public class RegisterForm extends javax.swing.JFrame {
         jLabelUsername = new javax.swing.JLabel();
         jTextFieldUsername = new javax.swing.JTextField();
         jLabelBirthDate = new javax.swing.JLabel();
-        jTextFieldBirthDate = new javax.swing.JTextField();
+        jTextFieldBirthDateYear = new javax.swing.JTextField();
         jLabelSex = new javax.swing.JLabel();
         jComboBoxSex = new javax.swing.JComboBox<>();
+        jTextFieldBirthDateMonth = new javax.swing.JTextField();
+        jTextFieldBirthDateDay = new javax.swing.JTextField();
         jLabelTitle = new javax.swing.JLabel();
         jButtonRegister = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
@@ -53,10 +130,10 @@ public class RegisterForm extends javax.swing.JFrame {
         jLabelBirthDate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabelBirthDate.setText("Birth Date: ");
 
-        jTextFieldBirthDate.setText("YYYY-MM-DD");
-        jTextFieldBirthDate.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldBirthDateYear.setText("YYYY");
+        jTextFieldBirthDateYear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldBirthDateActionPerformed(evt);
+                jTextFieldBirthDateYearActionPerformed(evt);
             }
         });
 
@@ -64,6 +141,10 @@ public class RegisterForm extends javax.swing.JFrame {
         jLabelSex.setText("Sex: ");
 
         jComboBoxSex.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Sex", "MALE", "FEMALE" }));
+
+        jTextFieldBirthDateMonth.setText("MM");
+
+        jTextFieldBirthDateDay.setText("DD");
 
         javax.swing.GroupLayout jPanelFormsLayout = new javax.swing.GroupLayout(jPanelForms);
         jPanelForms.setLayout(jPanelFormsLayout);
@@ -77,10 +158,6 @@ public class RegisterForm extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBoxSex, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanelFormsLayout.createSequentialGroup()
-                        .addComponent(jLabelBirthDate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldBirthDate))
-                    .addGroup(jPanelFormsLayout.createSequentialGroup()
                         .addComponent(jLabelUsername)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldUsername))
@@ -91,7 +168,15 @@ public class RegisterForm extends javax.swing.JFrame {
                     .addGroup(jPanelFormsLayout.createSequentialGroup()
                         .addComponent(jLabelEmail)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextFieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanelFormsLayout.createSequentialGroup()
+                        .addComponent(jLabelBirthDate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldBirthDateYear, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldBirthDateMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldBirthDateDay, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         jPanelFormsLayout.setVerticalGroup(
@@ -112,7 +197,9 @@ public class RegisterForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelFormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelBirthDate)
-                    .addComponent(jTextFieldBirthDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldBirthDateYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldBirthDateMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldBirthDateDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelFormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelSex)
@@ -178,9 +265,9 @@ public class RegisterForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextFieldBirthDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldBirthDateActionPerformed
+    private void jTextFieldBirthDateYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldBirthDateYearActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldBirthDateActionPerformed
+    }//GEN-LAST:event_jTextFieldBirthDateYearActionPerformed
 
     /**
      * @param args the command line arguments
@@ -230,7 +317,9 @@ public class RegisterForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelUsername;
     private javax.swing.JPanel jPanelForms;
     private javax.swing.JPasswordField jPasswordField;
-    private javax.swing.JTextField jTextFieldBirthDate;
+    private javax.swing.JTextField jTextFieldBirthDateDay;
+    private javax.swing.JTextField jTextFieldBirthDateMonth;
+    private javax.swing.JTextField jTextFieldBirthDateYear;
     private javax.swing.JTextField jTextFieldEmail;
     private javax.swing.JTextField jTextFieldUsername;
     private javax.swing.JPanel rootPanel;

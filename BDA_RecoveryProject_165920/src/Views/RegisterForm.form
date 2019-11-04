@@ -100,11 +100,6 @@
                               <Component id="jComboBoxSex" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="jLabelBirthDate" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jTextFieldBirthDate" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
                               <Component id="jLabelUsername" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jTextFieldUsername" max="32767" attributes="0"/>
@@ -118,6 +113,15 @@
                               <Component id="jLabelEmail" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jTextFieldEmail" min="-2" pref="190" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabelBirthDate" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jTextFieldBirthDateYear" min="-2" pref="48" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jTextFieldBirthDateMonth" min="-2" pref="45" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jTextFieldBirthDateDay" min="-2" pref="57" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace pref="20" max="32767" attributes="0"/>
@@ -145,7 +149,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabelBirthDate" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jTextFieldBirthDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldBirthDateYear" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldBirthDateMonth" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldBirthDateDay" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -196,12 +202,12 @@
                 <Property name="text" type="java.lang.String" value="Birth Date: "/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="jTextFieldBirthDate">
+            <Component class="javax.swing.JTextField" name="jTextFieldBirthDateYear">
               <Properties>
-                <Property name="text" type="java.lang.String" value="YYYY-MM-DD"/>
+                <Property name="text" type="java.lang.String" value="YYYY"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextFieldBirthDateActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextFieldBirthDateYearActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabelSex">
@@ -225,6 +231,16 @@
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
+            </Component>
+            <Component class="javax.swing.JTextField" name="jTextFieldBirthDateMonth">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="MM"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="jTextFieldBirthDateDay">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="DD"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

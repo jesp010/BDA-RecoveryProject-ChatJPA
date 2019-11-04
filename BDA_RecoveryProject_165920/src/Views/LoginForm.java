@@ -17,7 +17,7 @@ public class LoginForm extends javax.swing.JFrame implements ActionListener {
 
     public LoginForm() {
         initComponents();
-
+        
         userControl = new UserControl();
 
         jButtonLogin.addActionListener(this);

@@ -32,16 +32,6 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
     private ArrayList<User> activeChatUsers = null;
     private ArrayList<User> availableUsers = null;
 
-    public ChatsListForm() {
-        userControl = new UserControl();
-        this.userChatControl = new UserChatControl();
-        this.chatControl = new ChatControl();
-        activeChatUsers = new ArrayList<>();
-        availableUsers = new ArrayList<>();
-        initComponents();
-        setVisible(true);
-    }
-
     public ChatsListForm(User user) {
         this.userControl = new UserControl();
         this.userChatControl = new UserChatControl();
@@ -59,13 +49,13 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         jListActiveChats.setModel(new DefaultListModel<>());
         jListAvailableUsers.setModel(new DefaultListModel<>());
 
-        fillActiveChatsList();
-        fillAvailableList();
-        
+        refreshUsersArrayLists();
+        refreshListsContents();
+
         MouseListener mouseListenerActiveChats = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    String selectedChat = jListActiveChats.getSelectedValue().toString();
+                    String selectedChat = jListActiveChats.getSelectedValue();
                     User clickedUser = userControl.findByUsername(selectedChat);
 
                     ArrayList<UserChat> userChat1 = userChatControl.findAllByUserID(user.getId());
@@ -79,6 +69,9 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
                         }
                     }
 
+                    refreshUsersArrayLists();
+                    refreshListsContents();
+
                     if (chat != null) {
                         ChatForm cf = new ChatForm(chat);
                     }
@@ -87,31 +80,36 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         };
         jListActiveChats.addMouseListener(mouseListenerActiveChats);
 
+        //Event listener for availableChats list 
         MouseListener mouseListenerAvailableChats = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    String selectedChat = (String) jListAvailableUsers.getSelectedValue().toString();
-
-                    System.out.println(selectedChat);
+                    //Selected username to chat
+                    String selectedChat = (String) jListAvailableUsers.getSelectedValue();
+                    //Get user of selected list item
                     User clickedUser = userControl.findByUsername(selectedChat);
 
+                    //Create new chat and add UserChat objs
                     ArrayList<UserChat> uc = new ArrayList<>();
                     Chat chat = new Chat(uc, new Date());
                     uc.add(new UserChat(user, chat));
                     uc.add(new UserChat(clickedUser, chat));
 
-                    System.out.println("clicked user id: " + clickedUser.getId());
-                    System.out.println("user id: " + user.getId());
-                    //chat.setUsers(uc);
+                    //save chat and launch chatForm
                     chatControl.save(chat);
-                    ChatForm cf = new ChatForm(chat);
+
+                    refreshUsersArrayLists();
+                    refreshListsContents();
                     
-                    refreshContentsAvailableList();
+                    ChatForm cf = new ChatForm(chat);
+
                 }
 
             }
         };
         jListAvailableUsers.addMouseListener(mouseListenerAvailableChats);
+        
+        jLabelTitle.setText("Welcome " + this.user.getUserName() + "!!");
     }
 
     @Override
@@ -121,7 +119,7 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         switch (action) {
 
             case "Update":
-                UpdateForm uf = new UpdateForm();
+                UpdateForm uf = new UpdateForm(this.user);
                 break;
         }
     }
@@ -137,33 +135,62 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         return false;
     }
 
-    private void fillAvailableList() {
-        DefaultListModel<String> model = (DefaultListModel) jListAvailableUsers.getModel();
-        model.clear();
-        ArrayList<User> users = userControl.findAll(user);
+    private void refreshListsContents() {
+        //Refresh ActiveChatUsers JList model
+        DefaultListModel activeChatUsersModel = new DefaultListModel();
 
-        //remove activeChatUsers from availableUsers ArrayList
-        if (users.size() > 0) {
-            for (User u : users) {
-                if (!activeUserContains(u)) {
-                    availableUsers.add(u);
-                }
+        //Check if ArrayList isn't empty
+        if (activeChatUsers.size() > 0) {
+            //Loop through activeChatUsers ArrayList and append every index to the model
+            for (User u : activeChatUsers) {
+                activeChatUsersModel.addElement(u.getUserName());
             }
         }
+        jListActiveChats.setModel(activeChatUsersModel);
 
-        //fill list
+        DefaultListModel availableChatUsersModel = new DefaultListModel();
         if (availableUsers.size() > 0) {
             for (User u : availableUsers) {
-                model.addElement(u.getUserName());
+                availableChatUsersModel.addElement(u.getUserName());
             }
         }
-
+        jListAvailableUsers.setModel(availableChatUsersModel);
     }
-    
-    private void refreshContentsAvailableList(){
-         DefaultListModel<String> model =new DefaultListModel<>();
-         ArrayList<User> users = userControl.findAll(user);
-         
+
+    //refresh activeChatUsers and availableUsers ArrayLists
+    //From all users list remove all the active ones
+    //The rest will be available to chat
+    private void refreshUsersArrayLists() {
+
+        //Get all users except current user
+        ArrayList<User> users = userControl.findAll(user);
+        //Clear active user chats list
+        activeChatUsers.clear();
+
+        //Clear available users
+        availableUsers.clear();
+
+        //append all users to available users
+//        availableUsers.addAll(users);
+        //how to check if this.user have a chat with users?
+        //Loop through all users and search for the relationship
+        //After a new active user, ArrayLists have to refresh and then the lists refresh based on ArrayLists contents
+        //Get UserChats from User active chats
+        ArrayList<UserChat> usersChats = userChatControl.findAllByUserID(this.user.getId());
+
+        //Get all the UserChats with the same Chat.id as this.user and get the User obj of 
+        //users with an active chat with this.user and add them to activeUsersChat
+        if (usersChats.size() > 0) {
+            //loop all
+            for (UserChat uc : usersChats) {
+                User u = uc.getUser();
+                //If found user with an active chat, add it to activeChatUsers ArrayList
+                if (u.getId() != this.user.getId()) {
+                    activeChatUsers.add(u);
+                }
+            }
+        }
+
         //remove activeChatUsers from availableUsers ArrayList
         if (users.size() > 0) {
             for (User u : users) {
@@ -172,22 +199,6 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
                 }
             }
         }
-        
-        //remove duplicates
-                //remove duplicates of arraylist
-        Set<User> av_users_temp = new HashSet<>();
-        av_users_temp.addAll(availableUsers);
-        availableUsers.clear();
-        availableUsers.addAll(av_users_temp);
-
-        //fill list
-        if (availableUsers.size() > 0) {
-            for (User u : availableUsers) {
-                model.addElement(u.getUserName());
-            }
-        }
-        
-        jListAvailableUsers.setModel(model);
     }
 
     private boolean activeUserContains(User user) {
@@ -202,32 +213,81 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         return false;
     }
 
-    private void fillActiveChatsList() {
-        DefaultListModel<String> model = (DefaultListModel) jListActiveChats.getModel();
-//        jListActiveChats.setModel(new DefaultListModel<String>());
-//        ListModel model = jListActiveChats.getModel();
-        model.clear();
-
-        //Get users objs from active chats
-        ArrayList<UserChat> usersChats = userChatControl.findAllByUserID(this.user.getId());
-        System.out.println(usersChats.size());
-        if (usersChats.size() > 0) {
-            for (UserChat uc : usersChats) {
-                if (uc.getUser().getId() != user.getId()) {
-                    activeChatUsers.add(uc.getUser());
-                }
-            }
-        }
-
-        if (activeChatUsers.size() > 0) {
-            for (User u : activeChatUsers) {
-                model.addElement(u.getUserName());
-            }
-        }
-        System.out.println("inside fillActiveChatsList");
-        System.out.println(Arrays.toString(activeChatUsers.toArray()));
-    }
-
+//    private void refreshContentsAvailableList() {
+//        DefaultListModel<String> model = new DefaultListModel<>();
+//        ArrayList<User> users = userControl.findAll(user);
+//
+//        //remove activeChatUsers from availableUsers ArrayList
+//        if (users.size() > 0) {
+//            for (User u : users) {
+//                if (!activeUserContains(u)) {
+//                    availableUsers.add(u);
+//                }
+//            }
+//        }
+//
+//        //remove duplicates
+//        //remove duplicates of arraylist
+//        Set<User> av_users_temp = new HashSet<>();
+//        av_users_temp.addAll(availableUsers);
+//        availableUsers.clear();
+//        availableUsers.addAll(av_users_temp);
+//
+//        //fill list
+//        if (availableUsers.size() > 0) {
+//            for (User u : availableUsers) {
+//                model.addElement(u.getUserName());
+//            }
+//        }
+//
+//        jListAvailableUsers.setModel(model);
+//    }
+//    private void fillActiveChatsList() {
+//        DefaultListModel<String> model = (DefaultListModel) jListActiveChats.getModel();
+////        jListActiveChats.setModel(new DefaultListModel<String>());
+////        ListModel model = jListActiveChats.getModel();
+//        model.clear();
+//
+//        //Get users objs from active chats
+//        ArrayList<UserChat> usersChats = userChatControl.findAllByUserID(this.user.getId());
+//        if (usersChats.size() > 0) {
+//            for (UserChat uc : usersChats) {
+//                if (uc.getUser().getId() != user.getId()) {
+//                    activeChatUsers.add(uc.getUser());
+//                }
+//            }
+//        }
+//
+//        if (activeChatUsers.size() > 0) {
+//            for (User u : activeChatUsers) {
+//                model.addElement(u.getUserName());
+//            }
+//        }
+////        System.out.println("inside fillActiveChatsList");
+////        System.out.println(Arrays.toString(activeChatUsers.toArray()));
+//    }    
+//    private void fillAvailableList() {
+//        DefaultListModel<String> model = (DefaultListModel) jListAvailableUsers.getModel();
+//        model.clear();
+//        ArrayList<User> users = userControl.findAll(user);
+//
+//        //remove activeChatUsers from availableUsers ArrayList
+//        if (users.size() > 0) {
+//            for (User u : users) {
+//                if (!activeUserContains(u)) {
+//                    availableUsers.add(u);
+//                }
+//            }
+//        }
+//
+//        //fill list
+//        if (availableUsers.size() > 0) {
+//            for (User u : availableUsers) {
+//                model.addElement(u.getUserName());
+//            }
+//        }
+//
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -281,21 +341,25 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
                     .addGroup(rootPanelLayout.createSequentialGroup()
                         .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(rootPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPaneActiveChats, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(rootPanelLayout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(jScrollPaneActiveChats, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(rootPanelLayout.createSequentialGroup()
+                                        .addGap(33, 33, 33)
+                                        .addComponent(jLabelActiveChats)))
+                                .addGap(18, 18, 18)
+                                .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabelNewChat)
+                                    .addComponent(jScrollPaneNewChats, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(rootPanelLayout.createSequentialGroup()
-                                .addGap(33, 33, 33)
-                                .addComponent(jLabelActiveChats)))
-                        .addGap(18, 18, 18)
-                        .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelNewChat)
-                            .addComponent(jScrollPaneNewChats, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(rootPanelLayout.createSequentialGroup()
-                        .addGap(90, 90, 90)
-                        .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(96, 96, 96)
+                                .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rootPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         rootPanelLayout.setVerticalGroup(
             rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -332,40 +396,40 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ChatsListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ChatsListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ChatsListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ChatsListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ChatsListForm().setVisible(true);
-            }
-        });
-    }
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(ChatsListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(ChatsListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(ChatsListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(ChatsListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new ChatsListForm().setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonUpdate;

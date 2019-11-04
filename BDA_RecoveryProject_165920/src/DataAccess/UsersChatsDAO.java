@@ -66,8 +66,8 @@ public class UsersChatsDAO {
             }
         }
         //print all userchat with same user_id
-        System.out.println("print all userchat with same user_id");
-        System.out.println(Arrays.toString(uc.toArray()));
+//        System.out.println("print all userchat with same user_id");
+//        System.out.println(Arrays.toString(uc.toArray()));
 
         //get all chats ids
         ArrayList<Integer> chatIDs = new ArrayList<>();
@@ -86,8 +86,8 @@ public class UsersChatsDAO {
         chatIDs.addAll(chat_ids);
         
         //print all user chats ids 
-        System.out.println("printing chatIDs");
-        System.out.println(Arrays.toString(chatIDs.toArray()));
+//        System.out.println("printing chatIDs");
+//        System.out.println(Arrays.toString(chatIDs.toArray()));
         
         //add all userchats with same chat id
         ArrayList<UserChat> uc2 = new ArrayList<>();
@@ -96,7 +96,7 @@ public class UsersChatsDAO {
                 if(u.getChat().getId() == i) uc2.add(u);
             }
         }
-        System.out.println(Arrays.toString(uc2.toArray()));
+//        System.out.println(Arrays.toString(uc2.toArray()));
         return uc2;
     }
 

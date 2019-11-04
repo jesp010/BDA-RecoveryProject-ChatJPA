@@ -1,13 +1,107 @@
 package Views;
 
+import BusinessObjects.User;
+import Control.UserControl;
+import Enums.Sex;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  * @author Juan Enrique Solis Perla
  * @ID: 165920 Advanced Databases Class, ISW, ITSON
  */
-public class UpdateForm extends javax.swing.JFrame {
+public class UpdateForm extends javax.swing.JFrame implements ActionListener {
+
+    private User user;
+    private UserControl userControl;
 
     public UpdateForm() {
         initComponents();
+    }
+
+    public UpdateForm(User user) {
+
+        initComponents();
+        this.user = user;
+        userControl = new UserControl();
+
+        jButtonUpdate.addActionListener(this);
+        jButtonUpdate.setActionCommand("Update");
+
+        jButtonCancel.addActionListener(this);
+        jButtonCancel.setActionCommand("Cancel");
+
+        jLabelTitle.setText("Update " + this.user.getUserName());
+        setVisible(true);
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String date = format.format(user.getBirthDate());
+        String[] dates = date.split("-");
+
+        jTextFieldBirthDateYear.setText(dates[0]);
+        jTextFieldBirthDateMonth.setText(dates[1]);
+        int day = Integer.parseInt(dates[2]) + 1;
+        jTextFieldBirthDateDay.setText("" + day);
+
+        jTextFieldEmail.setText(user.getEmail());
+        jTextFieldUsername.setText(user.getUserName());
+
+        jComboBoxSex.setSelectedIndex(user.getSex() == Sex.FEMALE ? 2 : 1);
+
+    }
+
+    private void update() {
+        String password = String.valueOf(jPasswordField.getText());
+        Date date = new Date(Integer.parseInt(jTextFieldBirthDateYear.getText()), Integer.parseInt(jTextFieldBirthDateMonth.getText()), Integer.parseInt(jTextFieldBirthDateDay.getText()));
+
+        user.setEmail(jTextFieldEmail.getText());
+        user.setPassword(password);
+        user.setUserName(jTextFieldUsername.getText());
+        user.setBirthDate(date);
+
+        String sexSelection = (String) jComboBoxSex.getSelectedItem();
+
+        if (sexSelection.equalsIgnoreCase("FEMALE")) {
+            user.setSex(Sex.FEMALE);
+            userControl.update(user);
+            JOptionPane.showMessageDialog(rootPane, "Updated user successfully");;
+        } else if (sexSelection.equalsIgnoreCase("MALE")) {
+            user.setSex(Sex.MALE);
+            userControl.update(user);
+            JOptionPane.showMessageDialog(rootPane, "Updated user successfully");
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Select sex please");
+        }
+    }
+    
+    private void cancel(){
+        jTextFieldEmail.setText("");
+        jTextFieldUsername.setText("");
+        jPasswordField.setText("");
+        jComboBoxSex.setSelectedIndex(0);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        String action = ae.getActionCommand();
+
+        switch (action) {
+
+            case "Update":
+                update();
+                break;
+            case "Cancel":
+                cancel();
+                break;
+        }
     }
 
     /**
@@ -28,12 +122,14 @@ public class UpdateForm extends javax.swing.JFrame {
         jLabelUsername = new javax.swing.JLabel();
         jTextFieldUsername = new javax.swing.JTextField();
         jLabelBirthDate = new javax.swing.JLabel();
-        jTextFieldBirthDate = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        jTextFieldBirthDateYear = new javax.swing.JTextField();
+        jLabelSex = new javax.swing.JLabel();
         jComboBoxSex = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jTextFieldBirthDateMonth = new javax.swing.JTextField();
+        jTextFieldBirthDateDay = new javax.swing.JTextField();
+        jLabelTitle = new javax.swing.JLabel();
+        jButtonUpdate = new javax.swing.JButton();
+        jButtonCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Update User");
@@ -53,17 +149,21 @@ public class UpdateForm extends javax.swing.JFrame {
         jLabelBirthDate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabelBirthDate.setText("Birth Date: ");
 
-        jTextFieldBirthDate.setText("YYYY-MM-DD");
-        jTextFieldBirthDate.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldBirthDateYear.setText("YYYY");
+        jTextFieldBirthDateYear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldBirthDateActionPerformed(evt);
+                jTextFieldBirthDateYearActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel1.setText("Sex: ");
+        jLabelSex.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabelSex.setText("Sex: ");
 
         jComboBoxSex.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Sex", "MALE", "FEMALE" }));
+
+        jTextFieldBirthDateMonth.setText("MM");
+
+        jTextFieldBirthDateDay.setText("DD");
 
         javax.swing.GroupLayout jPanelFormsLayout = new javax.swing.GroupLayout(jPanelForms);
         jPanelForms.setLayout(jPanelFormsLayout);
@@ -73,13 +173,18 @@ public class UpdateForm extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addGroup(jPanelFormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanelFormsLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(jLabelSex)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBoxSex, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanelFormsLayout.createSequentialGroup()
                         .addComponent(jLabelBirthDate)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldBirthDate))
+                        .addComponent(jTextFieldBirthDateYear)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldBirthDateMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldBirthDateDay, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20))
                     .addGroup(jPanelFormsLayout.createSequentialGroup()
                         .addComponent(jLabelUsername)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -112,23 +217,25 @@ public class UpdateForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelFormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelBirthDate)
-                    .addComponent(jTextFieldBirthDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldBirthDateYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldBirthDateMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldBirthDateDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelFormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(jLabelSex)
                     .addComponent(jComboBoxSex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Update User");
+        jLabelTitle.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelTitle.setText("Update User");
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jButton1.setText("Update");
+        jButtonUpdate.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButtonUpdate.setText("Update");
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jButton2.setText("Cancel");
+        jButtonCancel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButtonCancel.setText("Cancel");
 
         javax.swing.GroupLayout rootPanelLayout = new javax.swing.GroupLayout(rootPanel);
         rootPanel.setLayout(rootPanelLayout);
@@ -138,28 +245,29 @@ public class UpdateForm extends javax.swing.JFrame {
                 .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(rootPanelLayout.createSequentialGroup()
                         .addGap(30, 30, 30)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButtonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(rootPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanelForms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(rootPanelLayout.createSequentialGroup()
-                        .addGap(86, 86, 86)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanelForms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(rootPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         rootPanelLayout.setVerticalGroup(
             rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rootPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelForms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButtonUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+                    .addComponent(jButtonCancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(45, 45, 45))
         );
 
@@ -178,9 +286,9 @@ public class UpdateForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextFieldBirthDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldBirthDateActionPerformed
+    private void jTextFieldBirthDateYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldBirthDateYearActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldBirthDateActionPerformed
+    }//GEN-LAST:event_jTextFieldBirthDateYearActionPerformed
 
     /**
      * @param args the command line arguments
@@ -218,18 +326,20 @@ public class UpdateForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonCancel;
+    private javax.swing.JButton jButtonUpdate;
     private javax.swing.JComboBox<String> jComboBoxSex;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelBirthDate;
     private javax.swing.JLabel jLabelEmail;
     private javax.swing.JLabel jLabelPassword;
+    private javax.swing.JLabel jLabelSex;
+    private javax.swing.JLabel jLabelTitle;
     private javax.swing.JLabel jLabelUsername;
     private javax.swing.JPanel jPanelForms;
     private javax.swing.JPasswordField jPasswordField;
-    private javax.swing.JTextField jTextFieldBirthDate;
+    private javax.swing.JTextField jTextFieldBirthDateDay;
+    private javax.swing.JTextField jTextFieldBirthDateMonth;
+    private javax.swing.JTextField jTextFieldBirthDateYear;
     private javax.swing.JTextField jTextFieldEmail;
     private javax.swing.JTextField jTextFieldUsername;
     private javax.swing.JPanel rootPanel;
