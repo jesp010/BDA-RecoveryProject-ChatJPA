@@ -35,6 +35,7 @@ public class Chat implements Serializable {
     private Date creationDate;
 
     public Chat() {
+        
     }
 
     public Chat(List<UserChat> users, Date creationDate) {

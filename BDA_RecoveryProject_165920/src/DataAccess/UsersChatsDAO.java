@@ -2,6 +2,9 @@ package DataAccess;
 
 import BusinessObjects.UserChat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -35,6 +38,66 @@ public class UsersChatsDAO {
             }
         }
         return null;
+    }
+
+//    public ArrayList<UserChat> findAllByUserID(Integer id) {
+//        em.getTransaction().begin();
+//        String jpqlQuery = "SELECT u FROM UserChat u WHERE u.user.id = :id";
+//        TypedQuery<UserChat> query = em.createQuery(jpqlQuery, UserChat.class);
+//        query.setParameter("id", id);
+//        ArrayList<UserChat> userChat = new ArrayList<>(query.getResultList());
+//        em.getTransaction().commit();
+//
+//        if (userChat.size() > 0) {
+//            return userChat;
+//        } else {
+//            return null;
+//        }
+//    }
+    public ArrayList<UserChat> findAllByUserID(Integer id) {
+        ArrayList<UserChat> uc_tmp = findAll();
+        ArrayList<UserChat> uc = new ArrayList<>();
+        
+        //get all userchats with provided id
+        for (UserChat u : uc_tmp) {
+            Integer uID = u.getUser().getId();
+            if (uID == id) {
+                uc.add(u);
+            }
+        }
+        //print all userchat with same user_id
+        System.out.println("print all userchat with same user_id");
+        System.out.println(Arrays.toString(uc.toArray()));
+
+        //get all chats ids
+        ArrayList<Integer> chatIDs = new ArrayList<>();
+        for (UserChat u : uc_tmp) {
+            for (UserChat u2 : uc) {
+                if (u.getChat().getId() == u2.getChat().getId()) {
+                    chatIDs.add(u.getChat().getId());
+                }
+            }
+        }
+        
+        //remove duplicates of arraylist
+        Set<Integer> chat_ids = new HashSet<>();
+        chat_ids.addAll(chatIDs);
+        chatIDs.clear();
+        chatIDs.addAll(chat_ids);
+        
+        //print all user chats ids 
+        System.out.println("printing chatIDs");
+        System.out.println(Arrays.toString(chatIDs.toArray()));
+        
+        //add all userchats with same chat id
+        ArrayList<UserChat> uc2 = new ArrayList<>();
+        for(UserChat u : uc_tmp){
+            for(Integer i: chatIDs){
+                if(u.getChat().getId() == i) uc2.add(u);
+            }
+        }
+        System.out.println(Arrays.toString(uc2.toArray()));
+        return uc2;
     }
 
     public ArrayList<UserChat> findAll() {

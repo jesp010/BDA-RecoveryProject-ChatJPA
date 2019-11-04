@@ -22,8 +22,8 @@ public class MappingTest {
         em = factory.createEntityManager();
 
         ArrayList<Object> objects = new ArrayList<>();
-        User u1 = new User("juanenriqqweue1", "123123qwe", "juaan@gail.com", new Date(1997 - 1900, 7, 11), new Date(), Sex.MALE, null, null);
-        User u2 = new User("dianagabriqwe1ela", "123123qwe", "diaana@gmil.com", new Date(1996 - 1900, 1, 16), new Date(), Sex.FEMALE, null, null);
+        User u1 = new User("juan4", "123123qwe", "juaan4@gail.com", new Date(1997 - 1900, 7, 11), new Date(), Sex.MALE, null, null);
+        User u2 = new User("diana4", "123123qwe", "diaana4@gmil.com", new Date(1996 - 1900, 1, 16), new Date(), Sex.FEMALE, null, null);
         objects.add(u1);
         objects.add(u2);
 
@@ -65,8 +65,8 @@ public class MappingTest {
 //            System.out.println(u.toString());
 //        }
 
-        UsersDAO udao = new UsersDAO();
-        System.out.println(udao.findByEmail("juan@gmail.com").toString());
+//        UsersDAO udao = new UsersDAO();
+//        System.out.println(udao.findByEmail("juan@gmail.com").toString());
         
         em.getTransaction().begin();
         for (Object o : objects) {

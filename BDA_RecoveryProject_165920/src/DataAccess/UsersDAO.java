@@ -15,6 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
  * @ID: 165920 Advanced Databases Class, ISW, ITSON
  */
 public class UsersDAO {
+
     private EntityManagerFactory factory = null;
     private EntityManager em = null;
 
@@ -22,7 +23,7 @@ public class UsersDAO {
         factory = Persistence.createEntityManagerFactory(BaseDAO.PU_JUATSAPP);
         em = factory.createEntityManager();
     }
-    
+
     public User findByID(Integer id) {
         // get length of id (Can't be > 11
         int length = Integer.toString(id).length();
@@ -37,17 +38,69 @@ public class UsersDAO {
         }
         return null;
     }
-    
-    public User findByEmail(String email){
+
+    public User findByEmail(String email) {
         em.getTransaction().begin();
         String jpqlQuery = "SELECT u FROM User u  WHERE u.email = :email";
         TypedQuery<User> query = em.createQuery(jpqlQuery, User.class);
         query.setParameter("email", email);
         List<User> user = query.getResultList();
         em.getTransaction().commit();
-        
-        if(user.size() > 0) return user.get(0);
-        else return null;
+
+        if (user.size() > 0) {
+            return user.get(0);
+        } else {
+            return null;
+        }
+    }
+
+//    public User findByUsername(String username) {
+//        em.getTransaction().begin();
+//        String jpqlQuery = "SELECT u FROM User u  WHERE u.username = :username";
+//        TypedQuery<User> query = em.createQuery(jpqlQuery, User.class);
+//        query.setParameter("username", username);
+//        List<User> user = query.getResultList();
+//        em.getTransaction().commit();
+//
+//        if (user.size() > 0) {
+//            return user.get(0);
+//        } else {
+//            return null;
+//        }
+//    }
+    public User findByUsername(String username) {
+        ArrayList<User> users = findAll();
+        for(User u:users){
+            if(u.getUserName().equals(username))
+            return u;
+        }
+        return null;
+    }
+
+//    public ArrayList<User> findAll(User user) {
+//        em.getTransaction().begin();
+//        String jpqlQuery = "SELECT u FROM User u  WHERE u.ID != :uid";
+//        TypedQuery<User> query = em.createQuery(jpqlQuery, User.class);
+//        query.setParameter("uid", user.getId());
+//        ArrayList<User> users = new ArrayList<>(query.getResultList());
+//        em.getTransaction().commit();
+//
+//        if (users.size() > 0) {
+//            return users;
+//        } else {
+//            return null;
+//        }
+//    }
+    public ArrayList<User> findAll(User user) {
+        ArrayList<User> users = findAll();
+        if (users.size() > 0) {
+            for (int i = 0; i < users.size(); i++) {
+                if (users.get(i).getId() == user.getId()) {
+                    users.remove(i);
+                }
+            }
+        }
+        return users;
     }
 
     public ArrayList<User> findAll() {

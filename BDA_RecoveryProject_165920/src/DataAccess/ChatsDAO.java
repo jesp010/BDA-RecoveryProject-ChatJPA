@@ -36,6 +36,10 @@ public class ChatsDAO {
         }
         return null;
     }
+    
+    public Chat findByUsersIDs(Integer id1, Integer id2){
+        return null;
+    }
 
     public ArrayList<Chat> findAll() {
         em.getTransaction().begin();

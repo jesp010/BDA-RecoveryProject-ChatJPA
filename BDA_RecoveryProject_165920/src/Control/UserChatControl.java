@@ -19,6 +19,10 @@ public class UserChatControl {
     public UserChat findByID(Integer id) {
         return usersChatsDAO.findByID(id);
     }
+    
+    public ArrayList<UserChat> findAllByUserID(Integer id) {
+        return usersChatsDAO.findAllByUserID(id);
+    }
 
     public ArrayList<UserChat> findAll() {
         return usersChatsDAO.findAll();

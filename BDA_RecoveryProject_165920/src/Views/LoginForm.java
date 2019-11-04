@@ -1,7 +1,7 @@
 package Views;
 
 import BusinessObjects.User;
-import DataAccess.UsersDAO;
+import Control.UserControl;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
@@ -13,12 +13,12 @@ import Regex.Regex;
  */
 public class LoginForm extends javax.swing.JFrame implements ActionListener {
 
-    UsersDAO usersDAO;
+    UserControl userControl;
 
     public LoginForm() {
         initComponents();
 
-        usersDAO = new UsersDAO();
+        userControl = new UserControl();
 
         jButtonLogin.addActionListener(this);
         jButtonLogin.setActionCommand("Login");
@@ -54,13 +54,13 @@ public class LoginForm extends javax.swing.JFrame implements ActionListener {
 
     private void login() {
         String email = jTextFieldEmail.getText();
-        User user = usersDAO.findByEmail(email);
+        User user = userControl.findByEmail(email);
         if (Regex.matchEmail(email)) {
             if (user != null) {
                 String password = String.valueOf(jPasswordField.getPassword());
                 if (Regex.matchPassword(password)) {
                     if (user.getPassword().equals(password)) {
-                        ChatsListForm clf = new ChatsListForm();
+                        ChatsListForm clf = new ChatsListForm(user);
                         cleanTextFields();
                         JOptionPane.showMessageDialog(rootPane, "Welcome " + user.getUserName() + "!!");
                     } else {
