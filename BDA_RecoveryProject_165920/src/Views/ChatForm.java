@@ -20,14 +20,13 @@ import javax.swing.text.StyledDocument;
  * @author Juan Enrique Solis Perla
  * @ID: 165920 Advanced Databases Class, ISW, ITSON
  */
-public class ChatForm extends javax.swing.JFrame implements ActionListener{
+public class ChatForm extends javax.swing.JFrame implements ActionListener {
 
     private Chat chat;
     private User user;
     private ChatControl chatControl;
     private MessageControl messageControl;
     private ArrayList<Message> chatMessages = null;
-
 
     public ChatForm(Chat chat, User userHost, User userReceiver) {
         initComponents();
@@ -38,24 +37,32 @@ public class ChatForm extends javax.swing.JFrame implements ActionListener{
         this.messageControl = new MessageControl();
         this.user = userHost;
         this.chat = chat;
-        
+
         jButtonSend.addActionListener(this);
         jButtonSend.setActionCommand("Send");
-        
+
+        jButtonRefresh.addActionListener(this);
+        jButtonRefresh.setActionCommand("Refresh");
+
         chatMessages = messageControl.findAllByChatID(chat.getId());
         refreshJTextPaneChatMessages();
         jLabelTitle.setText("Chat with " + userReceiver.getUserName());
     }
 
-    private void send(){
+    private void send() {
         String messageText = jTextAreaMessage.getText();
-        Message message = new Message(new Date(),messageText, this.user, this.chat);
+        Message message = new Message(new Date(), messageText, this.user, this.chat);
         messageControl.save(message);
         getChatMessages();
         refreshJTextPaneChatMessages();
         jTextAreaMessage.setText("");
     }
-    
+
+    private void refreshPane() {
+        getChatMessages();
+        refreshJTextPaneChatMessages();
+    }
+
     private void getChatMessages() {
         chatMessages.clear();
         chatMessages = messageControl.findAllByChatID(chat.getId());
@@ -88,7 +95,7 @@ public class ChatForm extends javax.swing.JFrame implements ActionListener{
             jTextPaneChat.setStyledDocument(doc);
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         String action = ae.getActionCommand();
@@ -97,6 +104,10 @@ public class ChatForm extends javax.swing.JFrame implements ActionListener{
 
             case "Send":
                 send();
+                break;
+
+            case "Refresh":
+                refreshPane();
                 break;
         }
     }
@@ -116,6 +127,7 @@ public class ChatForm extends javax.swing.JFrame implements ActionListener{
         jScrollPaneMessage = new javax.swing.JScrollPane();
         jTextAreaMessage = new javax.swing.JTextArea();
         jButtonSend = new javax.swing.JButton();
+        jButtonRefresh = new javax.swing.JButton();
 
         setResizable(false);
 
@@ -134,6 +146,8 @@ public class ChatForm extends javax.swing.JFrame implements ActionListener{
         jButtonSend.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButtonSend.setText("Send");
 
+        jButtonRefresh.setText("Refresh");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -144,20 +158,23 @@ public class ChatForm extends javax.swing.JFrame implements ActionListener{
                     .addComponent(jScrollPaneChat)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabelTitle)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonRefresh))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPaneMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonSend, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)))
+                        .addComponent(jButtonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 68, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabelTitle)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabelTitle)
+                    .addComponent(jButtonRefresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneChat, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                .addComponent(jScrollPaneChat, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonSend, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
@@ -171,6 +188,7 @@ public class ChatForm extends javax.swing.JFrame implements ActionListener{
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonRefresh;
     private javax.swing.JButton jButtonSend;
     private javax.swing.JLabel jLabelTitle;
     private javax.swing.JScrollPane jScrollPaneChat;

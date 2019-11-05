@@ -42,6 +42,9 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         jButtonUpdate.addActionListener(this);
         jButtonUpdate.setActionCommand("Update");
 
+        jButtonRefresh.addActionListener(this);
+        jButtonRefresh.setActionCommand("Refresh");
+
         jListActiveChats.setModel(new DefaultListModel<>());
         jListAvailableUsers.setModel(new DefaultListModel<>());
 
@@ -116,6 +119,10 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
 
             case "Update":
                 UpdateForm uf = new UpdateForm(this.user);
+                break;
+            case "Refresh":
+                refreshUsersArrayLists();
+                refreshListsContents();
                 break;
         }
     }
@@ -228,6 +235,7 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         jButtonUpdate = new javax.swing.JButton();
         jLabelTitle = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        jButtonRefresh = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Select Chat");
@@ -252,6 +260,9 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
         jLabelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelTitle.setText("Welcome User!");
 
+        jButtonRefresh.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButtonRefresh.setText("Refresh");
+
         javax.swing.GroupLayout rootPanelLayout = new javax.swing.GroupLayout(rootPanel);
         rootPanel.setLayout(rootPanelLayout);
         rootPanelLayout.setHorizontalGroup(
@@ -262,24 +273,24 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
                     .addGroup(rootPanelLayout.createSequentialGroup()
                         .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(rootPanelLayout.createSequentialGroup()
-                                .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(rootPanelLayout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .addComponent(jScrollPaneActiveChats, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(rootPanelLayout.createSequentialGroup()
-                                        .addGap(33, 33, 33)
-                                        .addComponent(jLabelActiveChats)))
-                                .addGap(18, 18, 18)
-                                .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabelNewChat)
-                                    .addComponent(jScrollPaneNewChats, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap()
+                                .addComponent(jScrollPaneActiveChats, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(rootPanelLayout.createSequentialGroup()
-                                .addGap(96, 96, 96)
-                                .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(33, 33, 33)
+                                .addComponent(jLabelActiveChats)))
+                        .addGap(18, 18, 18)
+                        .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelNewChat)
+                            .addComponent(jScrollPaneNewChats, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rootPanelLayout.createSequentialGroup()
+                    .addGroup(rootPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(rootPanelLayout.createSequentialGroup()
+                                .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButtonRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         rootPanelLayout.setVerticalGroup(
@@ -287,8 +298,10 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rootPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addGroup(rootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonRefresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -319,6 +332,7 @@ public class ChatsListForm extends javax.swing.JFrame implements ActionListener 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonRefresh;
     private javax.swing.JButton jButtonUpdate;
     private javax.swing.JLabel jLabelActiveChats;
     private javax.swing.JLabel jLabelNewChat;
